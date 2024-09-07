@@ -14,11 +14,14 @@ if (!cached) {
 
 async function connectToDatabase() {
     if (cached.conn) {
+        console.log("logged in to mongoos from cache")
         return cached.conn;
     }
 
     if (!cached.promise) {
+        console.log("loggin in to mongoos")
         cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
+            console.log("logged in to mongoos")
             return mongoose;
         });
     }
