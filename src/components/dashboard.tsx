@@ -1,10 +1,18 @@
-'use client'
+// app/dashboard/page.tsx
+import { getServerSession } from "next-auth/next"
+import { redirect } from "next/navigation"
 
+export default async function DashboardPage() {
+    const session = await getServerSession()
 
+    if (!session) {
+        redirect("/api/auth/signin")
+    }
 
-
-export function Dashboard() {
     return (
-        <h1>Dashboard</h1>
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome, {session.user?.name}!</p>
+        </div>
     )
 }
