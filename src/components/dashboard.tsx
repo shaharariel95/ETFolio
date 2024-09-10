@@ -1,18 +1,27 @@
-// app/dashboard/page.tsx
-import { getServerSession } from "next-auth/next"
+"use client"
+
+import { signOut, useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
+import { useEffect } from "react";
+import { useRouter } from 'next/navigation';
 
-export default async function DashboardPage() {
-    const session = await getServerSession()
+export default function DashboardPage() {
 
-    if (!session) {
-        redirect("/api/auth/signin")
-    }
+    const { data: session } = useSession(); // NextAuth session
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!session) {
+            redirect("/login")
+        }
+    }, [session, router])
+
 
     return (
         <div>
             <h1>Dashboard</h1>
-            <p>Welcome, {session.user?.name}!</p>
-        </div>
+            <p>Welcome, {session?.user?.name}!</p>
+            <button onClick={() => { signOut() }}> logout </button>
+        </div >
     )
 }

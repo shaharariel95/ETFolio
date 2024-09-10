@@ -26,37 +26,13 @@ export function LoginPage() {
 
   }, [session, router]);
 
-  // Handle the form submission for login
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();  // Prevent default form submission
-
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),  // Send email and password
-      });
-
-      const data = await res.json();  // Parse response data
-      console.log(`data recieved: ${data}`)
-
-      if (res.ok) {
-        console.log(`res was ok`)
-        // Store the JWT token in localStorage (or use cookies for more security)
-        console.log('loggin succesful')
-        localStorage.setItem('firstName', data.firstName);
-        localStorage.setItem('lastName', data.lastName);
-
-        // Redirect to the dashboard page on successful login
-        router.push('/dashboard');
-        // window.location.reload()
-      } else {
-        setError(data.error || 'Something went wrong');
-      }
-    } catch (err) {
-      setError('An error occurred while logging in');
+    e.preventDefault();
+    const res = await signIn('credentials', { email, password, redirect: false });
+    if (res?.error) {
+      setError(res.error);
+    } else {
+      router.push('/dashboard'); // Redirect after successful login
     }
   };
 

@@ -1,11 +1,11 @@
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
+import bcrypt from 'bcryptjs';
 import connectToDatabase from "./mongodb";
 import User from '@/models/User';
-import { SignJWT } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -17,7 +17,35 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text", placeholder: "email@example.com" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                // Connect to DB
+                await connectToDatabase();
+
+                // Find the user in the database
+                const user = await User.findOne({ email: credentials?.email });
+
+                if (!user) {
+                    throw new Error("No user found with this email");
+                }
+
+                // Check if password matches
+                const isPasswordCorrect = await bcrypt.compare(credentials?.password as string, user.password);
+                if (!isPasswordCorrect) {
+                    throw new Error("Password is incorrect");
+                }
+
+                user.name = user.firstName + " " + user.lastName
+                return user;
+            }
+        })
     ],
+    debug: true,
     session: {
         strategy: 'jwt', // Use JWT strategy for sessions
     },
@@ -45,66 +73,13 @@ export const authOptions: NextAuthOptions = {
                         { $addToSet: { provider: account?.provider } }
                     );
                 }
-                const token = await new SignJWT({ userId: dbUser._id })
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .setIssuedAt()
-                    .setExpirationTime('1d')
-                    .sign(JWT_SECRET);
 
-                user.customToken = token
                 return true
             }
             return false
         },
-        async jwt({ token, user }) {
-            if (user) {
-                token.customToken = user.customToken;
-            }
-            return token;
-        },
-        async session({ session, token }) {
-            session.user.customToken = token.customToken as string
-            return session;
-        },
     }
-    // callbacks: {
-    //     async signIn({ user, account, profile }: { user: any; account: any | null; profile?: any }) {
-    //         console.log(`inside signIn callback with user: ${profile?.email}`)
-    //         if (account?.provider === "github") {
-    //             try {
-    //                 await connectToDatabase(); // Connect to DB
-
-    //                 let dbUser = await User.findOne({ email: user.email });
-    //                 if (!dbUser) {
-    //                     dbUser = await User.create({
-    //                         email: user.email,
-    //                         firstName: user.name?.split(' ')[0] || '',
-    //                         lastName: user.name?.split(' ').slice(1).join(' ') || '',
-    //                     });
-    //                 }
-
-    //                 return true;
-    //             } catch (error) {
-    //                 console.error('Error in signIn callback:', error);
-    //                 return false;
-    //             }
-    //         }
-    //         return true;
-    //     },
-    //     async jwt({ token, user }: { token: any, user: any }) {
-    //         if (user) {
-    //             token.customToken = user.customToken;
-    //         }
-    //         return token;
-    //     },
-    //     async session({ session, token }: { session: any, token: any }) {
-    //         session.customToken = token.customToken;
-    //         return session;
-    //     },
-    // },
 };
 
-// const handler = NextAuth(authOptions);
-// export { handler as GET, handler as POST };
 
 
