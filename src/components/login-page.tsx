@@ -55,6 +55,7 @@ export function LoginPage() {
                   width={48}  // Set the width
                   height={48} // Set the height
                   className="mb-4"
+                // style={{ background: 'grey', borderRadius: 15 }}
                 />
                 <h1 className="text-2xl font-bold mb-2">Welcome to ETFolio</h1>
                 <p className="mb-6">Discover amazing features and boost your productivity</p>
