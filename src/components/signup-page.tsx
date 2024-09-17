@@ -75,7 +75,7 @@ export function SignupPage() {
     >
       <Card className="w-full max-w-4xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 bg-primary p-8 text-primary-foreground flex flex-col justify-between">
+          <div className="hidden md:w-1/2 bg-primary p-8 text-primary-foreground lg:flex flex-col justify-between">
             <div>
               <Image
                 src="/images/logo.svg"
