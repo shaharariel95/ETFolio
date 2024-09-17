@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
                 ))}
             </nav>
             <div className="p-4">
-                <Button onClick={handleSignOut} variant="outline" className="w-full text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" disabled={isSigningOut}>
+                <Button onClick={handleSignOut} variant="outline" className="w-full ring-1 justify-start text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" disabled={isSigningOut}>
                     {isSigningOut ? (
                         <div className="w-5 h-5 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin mr-3"></div>
                     ) : (
