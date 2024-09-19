@@ -32,7 +32,7 @@ export function ThemeSelectionCard({ title, isActive, previewSrc, isSelected, on
                     alt={`${title} preview`}
                     width={228}
                     height={120}
-                    className="w-full h-auto"
+                    className="w-full h-auto rounded-sm"
                 />
             </CardContent>
         </Card>
