@@ -54,6 +54,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,10 +83,42 @@ body {
   }
 }
 
+
+@keyframes rotate-border {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 400% 0;
+  }
+}
+
+.glowing-border {
+  position: relative;
+  padding: 2px;
+  /* Padding for the glow effect */
+  background: linear-gradient(90deg, #3333ff, #00ff99, #ff00cc, #3333ff);
+  background-size: 400%;
+  animation: rotate-border 16s linear infinite;
+  border-radius: 10px;
+}
+
+.glowing-border>.card {
+  background-color: #fff;
+  /* White background for the card content */
+  padding: 16px;
+  border-radius: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

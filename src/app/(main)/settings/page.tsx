@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch"
 import { toast } from 'sonner'
 import { Sun, User, Lock, Bell, Download } from 'lucide-react'
 import ThemeSwitch from '@/components/ThemeSwitch'
-import { ThemeSelectionCard } from '@/components/theme-selection-card'
+// import { ThemeSelectionCard } from '@/components/theme-selection-card'
 
 export default function SettingsPage() {
     const [name, setName] = useState('John Doe')
@@ -54,17 +54,17 @@ export default function SettingsPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white p-4 lg:p-8">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto pt-28">
                 <h1 className="text-4xl font-bold mb-8">Settings</h1>
-                <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 blur opacity-20 animate-pulse"></div>
+                <div className="relative glowing-border">
+                    {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-200 to-purple-900 blur opacity-20 animate-pulse"></div> */}
                     <Tabs defaultValue="profile" className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                        <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-700 p-1">
-                            <TabsTrigger value="profile" className="flex items-center gap-2"><User size={16} /> Profile</TabsTrigger>
-                            <TabsTrigger value="appearance" className="flex items-center gap-2"><Sun size={16} /> Appearance</TabsTrigger>
-                            <TabsTrigger value="security" className="flex items-center gap-2"><Lock size={16} /> Security</TabsTrigger>
-                            <TabsTrigger value="notifications" className="flex items-center gap-2"><Bell size={16} /> Notifications</TabsTrigger>
-                            <TabsTrigger value="data" className="flex items-center gap-2"><Download size={16} /> Data</TabsTrigger>
+                        <TabsList className="grid w-full grid-cols-5 bg-gray-100 dark:bg-gray-700 p-1 h-10">
+                            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:border-2 data-[state=active]:border-gray-400 "><User size={16} /> Profile</TabsTrigger>
+                            <TabsTrigger value="appearance" className="flex items-center gap-2 data-[state=active]:border-2 data-[state=active]:border-gray-400"><Sun size={16} /> Appearance</TabsTrigger>
+                            <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:border-2 data-[state=active]:border-gray-400"><Lock size={16} /> Security</TabsTrigger>
+                            <TabsTrigger value="notifications" className="flex items-center gap-2 data-[state=active]:border-2 data-[state=active]:border-gray-400"><Bell size={16} /> Notifications</TabsTrigger>
+                            <TabsTrigger value="data" className="flex items-center gap-2 data-[state=active]:border-2 data-[state=active]:border-gray-400"><Download size={16} /> Data</TabsTrigger>
                         </TabsList>
                         <div className="p-6">
                             <TabsContent value="profile">
@@ -107,7 +107,7 @@ export default function SettingsPage() {
                                         <CardTitle>Security</CardTitle>
                                         <CardDescription>Manage your account security</CardDescription>
                                     </CardHeader>
-                                    <CardContent className="space-y-4">
+                                    <CardContent className="mx-auto pt-5 flex justify-between">
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button variant="outline">Change Password</Button>
