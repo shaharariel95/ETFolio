@@ -17,7 +17,7 @@ export function ThemeSelectionCard({ title, isActive, previewSrc, isSelected, on
             onClick={onClick}
         >
             <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center justify-between">
                     {title}
                     {isActive && (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
