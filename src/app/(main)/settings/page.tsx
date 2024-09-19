@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                                 </div>
                                                 <AlertDialogFooter>
                                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={handleDeleteAccount}>Delete Account</AlertDialogAction>
+                                                    <AlertDialogAction onClick={handleDeleteAccount} className='bg-red-800 text-white'>Delete Account</AlertDialogAction>
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>

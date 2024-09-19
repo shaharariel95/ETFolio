@@ -33,6 +33,7 @@ export function ThemeSelectionCard({ title, isActive, previewSrc, isSelected, on
                     width={228}
                     height={120}
                     className="w-full h-auto rounded-sm"
+                    priority={true}
                 />
             </CardContent>
         </Card>
