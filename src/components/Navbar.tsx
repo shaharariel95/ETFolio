@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Home, TrendingUp, PieChart, BarChart3, Settings, LogOut, Menu } from 'lucide-react';
 import { signOut } from 'next-auth/react';
@@ -20,12 +21,21 @@ const Navbar: React.FC = () => {
     const [currentPage, setCurrentPage] = useState('Dashboard');
     const pathname = usePathname();
     const [isSigningOut, setIsSigningOut] = useState(false);
+    const { data: session } = useSession();
+    const [name, setName] = useState('');
+
 
     useEffect(() => {
         if (pathname) {
             setCurrentPage(routes[pathname] || 'Dashboard');
         }
     }, [pathname]);
+
+    useEffect(() => {
+        if (session && session.user?.name) {
+            setName(session.user.name);
+        }
+    }, [session]);
 
     const handleSignOut = async () => {
         setIsSigningOut(true);
@@ -40,9 +50,10 @@ const Navbar: React.FC = () => {
         <div className="flex flex-col h-full">
             <div className="p-4">
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white">ETFolio</h1>
-                <h2 className="text-lg text-gray-600 dark:text-gray-300 mt-1">{currentPage}</h2>
+                <h4 className="text-md text-gray-700 dark:text-gray-300 mt-1">Hello {name}</h4>
+                <h2 className="text-lg text-gray-600 pt-1 dark:text-gray-300 mt-1">{currentPage}</h2>
             </div>
-            <nav className="flex-grow mt-4">
+            <nav className="flex-grow mt-2">
                 {Object.entries(routes).map(([route, label]) => (
                     <NavLink key={route} href={route} icon={getIcon(label)} label={label} currentPage={currentPage} />
                 ))}

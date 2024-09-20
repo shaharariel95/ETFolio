@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
             }
         })
     ],
-    debug: true,
+    // debug: true,
     session: {
         strategy: 'jwt', // Use JWT strategy for sessions
     },
@@ -62,8 +62,9 @@ export const authOptions: NextAuthOptions = {
                 if (!dbUser) {
                     dbUser = await User.create({
                         email: user.email,
-                        firstName: user.name?.split(' ')[0] || '',
-                        lastName: user.name?.split(' ').slice(1).join(' ') || '',
+                        // firstName: user.name?.split(' ')[0] || '',
+                        // lastName: user.name?.split(' ').slice(1).join(' ') || '',
+                        name: user.name,
                         provider: [account?.provider]
                     });
                 }
