@@ -16,19 +16,22 @@ export async function PUT(req: Request) {
 
     await dbConnect();
     const user = await User.findOne({ email: session.user.email });
-
+    console.log(`found user: ${user}`)
     if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
+    console.log(`user pass: ${user.password}`)
     if (user.password !== undefined) {
+        console.log(`user pass wanst undefind`)
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-
+        console.log(`is the password matching: ${isMatch}`)
         if (!isMatch) {
             return NextResponse.json({ error: 'Incorrect password' }, { status: 400 });
         }
     }
+    console.log(`new password: ${newPassword}`)
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log(`new hashedPassword: ${hashedPassword}`)
     user.password = hashedPassword;
     await user.save();
 

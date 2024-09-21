@@ -17,6 +17,8 @@ import ThemeSwitch from '@/components/ThemeSwitch'
 export default function SettingsPage() {
     const { data: session } = useSession();
     const [name, setName] = useState('')
+    const [currentPassword, setCurrentPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
     const [passwordError, setPasswordError] = useState('');
     const [deleteAccountEmail, setDeleteAccountEmail] = useState('')
 
@@ -36,8 +38,11 @@ export default function SettingsPage() {
             });
             if (res.ok) {
                 toast.success('Name updated successfully');
+                console.log("trying to change user name to session")
                 if (session?.user) {
+                    console.log("updating user name to session")
                     session.user.name = name
+                    console.log(`session user name: ${session.user.name}`)
                     setName(session.user.name)
                 }
             } else {
@@ -56,10 +61,13 @@ export default function SettingsPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ currentPassword, newPassword })
             });
+
+            const data = await res.json()
+
             if (res.ok) {
                 toast.success('Password updated successfully');
             } else {
-                toast.error('Failed to update password');
+                toast.error(data.error || 'Failed to update password');
             }
         } catch (error) {
             toast.error('Failed to update password');
@@ -125,7 +133,7 @@ export default function SettingsPage() {
                                     <CardContent>
                                         <form onSubmit={handleNameChange} className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="name">first Name</Label>
+                                                <Label htmlFor="name">Name</Label>
                                                 <Input
                                                     id="name"
                                                     value={name}
@@ -172,15 +180,15 @@ export default function SettingsPage() {
                                                 <div className="grid gap-4 py-4">
                                                     <div className="grid grid-cols-4 items-center gap-4">
                                                         <Label htmlFor="current-password" className="text-right">Current</Label>
-                                                        <Input id="current-password" type="password" className="col-span-3" />
+                                                        <Input id="current-password" onChange={(e) => { setCurrentPassword(e.target.value) }} type="password" className="col-span-3" />
                                                     </div>
                                                     <div className="grid grid-cols-4 items-center gap-4">
                                                         <Label htmlFor="new-password" className="text-right">New</Label>
-                                                        <Input id="new-password" onChange={(e) => { validatePassword(e.target.value) }} type="password" className="col-span-3" />
+                                                        <Input id="new-password" onChange={(e) => { setNewPassword(e.target.value); validatePassword(e.target.value) }} type="password" className="col-span-3" />
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
-                                                    <Button onClick={() => handlePasswordChange('current', 'new')}>Change Password</Button>
+                                                    <Button onClick={() => handlePasswordChange(currentPassword, newPassword)}>Change Password</Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
