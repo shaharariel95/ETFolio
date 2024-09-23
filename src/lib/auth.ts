@@ -28,8 +28,9 @@ export const authOptions: NextAuthOptions = {
                 await connectToDatabase();
 
                 // Find the user in the database
+                console.log(`user trying to login: ${credentials?.email}, ${credentials?.password}`)
                 const user = await User.findOne({ email: credentials?.email });
-
+                console.log(`user found: ${user}`)
                 if (!user) {
                     throw new Error("No user found with this email");
                 }
@@ -40,7 +41,7 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Password is incorrect");
                 }
 
-                user.name = user.firstName + " " + user.lastName
+                // user.name = user.firstName + " " + user.lastName
                 return user;
             }
         })

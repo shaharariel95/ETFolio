@@ -26,7 +26,9 @@ export function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn('credentials', { email, password, redirect: false });
+    const emailtoset = email.toLowerCase()
+    console.log(`user trying to login: ${emailtoset}, ${password}`)
+    const res = await signIn('credentials', { email: emailtoset, password, redirect: false });
     if (res?.error) {
       setError(res.error);
     } else {
