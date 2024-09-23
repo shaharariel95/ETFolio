@@ -15,10 +15,11 @@ export async function DELETE(req: Request) {
     try {
         await dbConnect();
         await User.findOneAndDelete({ email: session?.user?.email });
+        return NextResponse.json({ message: 'Account deleted successfully' });
     }
-    catch {
+    catch (error) {
+        console.log(error)
         return NextResponse.json({ message: 'Error in Deleteing account' }, { status: 400 })
     }
 
-    return NextResponse.redirect('/api/auth/signout');
 }

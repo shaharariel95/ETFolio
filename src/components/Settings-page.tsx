@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -98,7 +98,7 @@ export default function SettingsPage() {
             });
             if (res.ok) {
                 toast.success('Account deleted successfully');
-                window.location.href = '/api/auth/signout'; // Sign out and redirect
+                await signOut();
             } else {
                 toast.error('Failed to delete account');
             }
