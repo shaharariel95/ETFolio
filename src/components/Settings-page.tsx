@@ -15,7 +15,7 @@ import { Sun, User, Lock, Bell, Download } from 'lucide-react'
 import ThemeSwitch from '@/components/ThemeSwitch'
 
 export default function SettingsPage() {
-    const { data: session } = useSession();
+    const { data: session, update } = useSession();
     const [name, setName] = useState('')
     const [currentPassword, setCurrentPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -38,13 +38,12 @@ export default function SettingsPage() {
             });
             if (res.ok) {
                 toast.success('Name updated successfully');
-                console.log("trying to change user name to session")
-                if (session?.user) {
-                    console.log("updating user name to session")
-                    session.user.name = name
-                    console.log(`session user name: ${session.user.name}`)
-                    setName(session.user.name)
-                }
+                await update({
+                    user: {
+                        ...session?.user,
+                        name: name
+                    }
+                })
             } else {
                 toast.error('Failed to update name');
             }

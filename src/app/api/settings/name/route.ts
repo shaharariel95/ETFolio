@@ -16,7 +16,7 @@ export async function PUT(req: Request) {
     try {
         await dbConnect();
         await User.findOneAndUpdate({ email: session.user.email }, { name });
-        session.user.name = name
+
     } catch {
         return NextResponse.json({ message: "problem updating the user in DB" }, { status: 501 })
     }

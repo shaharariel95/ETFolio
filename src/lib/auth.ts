@@ -75,10 +75,22 @@ export const authOptions: NextAuthOptions = {
                         { $addToSet: { provider: account?.provider } }
                     );
                 }
-
+                user.name = dbUser.name
                 return true
             }
             return false
+        },
+        async jwt({ token, trigger, session }) {
+            if (trigger === 'update') {
+                token.name = session.user.name;
+            }
+            return token
+        },
+        async session({ session, token }) {
+            if (token && session.user) {
+                session.user.name = token.name
+            }
+            return session
         },
     }
 };
