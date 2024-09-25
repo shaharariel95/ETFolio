@@ -1,76 +1,80 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Edit, Trash2 } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Edit, Trash2 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
+// Mockup ETF list for selection
 const etfList = [
     { symbol: "VTI", name: "Vanguard Total Stock Market ETF" },
     { symbol: "VOO", name: "Vanguard S&P 500 ETF" },
     { symbol: "QQQ", name: "Invesco QQQ Trust" },
-]
+];
 
 interface ETF {
-    symbol: string
-    name: string
-    shares: number
-    purchaseDate: Date
-    currentPrice: number
+    symbol: string;
+    name: string;
+    shares: number;
+    purchaseDate: Date;
+    currentPrice: number;
 }
 
-export default function Component() {
-    const [userEtfs, setUserEtfs] = useState<ETF[]>([
-        {
-            symbol: "VTI",
-            name: "Vanguard Total Stock Market ETF",
-            shares: 10,
-            purchaseDate: new Date("2023-01-15"),
-            currentPrice: 220.5,
-        },
-        {
-            symbol: "VOO",
-            name: "Vanguard S&P 500 ETF",
-            shares: 5,
-            purchaseDate: new Date("2023-03-20"),
-            currentPrice: 410.75,
-        },
-    ])
-
+export default function PortfolioPage() {
+    const [etfs, setEtfs] = useState<ETF[]>([]);
     const [newEtf, setNewEtf] = useState({
         symbol: "",
         shares: 0,
         purchaseDate: new Date(),
-    })
+    });
 
-    const addEtf = () => {
-        const selectedEtf = etfList.find((etf) => etf.symbol === newEtf.symbol)
+    // Fetch ETFs for the logged-in user
+    useEffect(() => {
+        const fetchEtfs = async () => {
+            const res = await fetch("/api/etfs/user");
+            if (res.ok) {
+                const data = await res.json();
+                setEtfs(data);
+            }
+        };
+        fetchEtfs();
+    }, []);
+
+    // Add ETF to the portfolio
+    const addEtf = async () => {
+        const selectedEtf = etfList.find((etf) => etf.symbol === newEtf.symbol);
         if (selectedEtf) {
-            setUserEtfs([
-                ...userEtfs,
-                {
-                    ...selectedEtf,
+            const res = await fetch("/api/etfs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    symbol: newEtf.symbol,
+                    name: selectedEtf.name,
                     shares: newEtf.shares,
                     purchaseDate: newEtf.purchaseDate,
-                    currentPrice: Math.random() * 500 + 100,
-                },
-            ])
-            setNewEtf({ symbol: "", shares: 0, purchaseDate: new Date() })
+                    currentPrice: Math.random() * 500 + 100, // Mock price logic
+                }),
+            });
+            if (res.ok) {
+                const etf = await res.json();
+                setEtfs([...etfs, etf.etf]);
+                setNewEtf({ symbol: "", shares: 0, purchaseDate: new Date() });
+            }
         }
-    }
+    };
 
-    const deleteEtf = (index: number) => {
-        setUserEtfs(userEtfs.filter((_, i) => i !== index))
-    }
+    const totalValue = etfs.reduce((sum, etf) => {
+        if (!etf) return sum;  // Skip undefined entries
+        return sum + etf.shares * etf.currentPrice;
+    }, 0);
 
-    const totalValue = userEtfs.reduce((sum, etf) => sum + etf.shares * etf.currentPrice, 0)
 
     return (
         <div className="p-4 sm:p-6 lg:p-8 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen pt-24 sm:pt-24">
@@ -87,7 +91,7 @@ export default function Component() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium">Number of ETFs</p>
-                                <p className="text-lg sm:text-2xl font-bold">{userEtfs.length}</p>
+                                <p className="text-lg sm:text-2xl font-bold">{etfs.length}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -134,11 +138,7 @@ export default function Component() {
                                                 !newEtf.purchaseDate && "text-muted-foreground"
                                             )}
                                         >
-                                            {newEtf.purchaseDate ? (
-                                                format(newEtf.purchaseDate, "PPP")
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
+                                            {newEtf.purchaseDate ? format(newEtf.purchaseDate, "PPP") : <span>Pick a date</span>}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0" align="start">
@@ -164,9 +164,9 @@ export default function Component() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {userEtfs.map((etf, index) => {
-                                const totalValue = etf.shares * etf.currentPrice
-                                const gainLoss = totalValue - etf.shares * 100
+                            {etfs.map((etf, index) => {
+                                const totalValue = etf.shares * etf.currentPrice;
+                                const gainLoss = totalValue - etf.shares * 100;
                                 return (
                                     <Card key={index}>
                                         <CardContent className="p-4">
@@ -176,7 +176,7 @@ export default function Component() {
                                                     <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Edit ETF">
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
-                                                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => deleteEtf(index)} aria-label="Delete ETF">
+                                                    <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Delete ETF">
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 </div>
@@ -208,12 +208,12 @@ export default function Component() {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                )
+                                );
                             })}
                         </div>
                     </CardContent>
                 </Card>
             </div>
         </div>
-    )
+    );
 }
