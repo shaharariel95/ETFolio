@@ -76,11 +76,15 @@ export const authOptions: NextAuthOptions = {
                     );
                 }
                 user.name = dbUser.name
+                user.id = dbUser.id
                 return true
             }
             return false
         },
-        async jwt({ token, trigger, session }) {
+        async jwt({ token, trigger, session, user }) {
+            if (user) {
+                token.id = user.id;
+            }
             if (trigger === 'update') {
                 token.name = session.user.name;
             }
@@ -88,6 +92,7 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (token && session.user) {
+                session.user.id = token.id as string
                 session.user.name = token.name
             }
             return session
