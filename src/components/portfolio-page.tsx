@@ -155,7 +155,7 @@ export default function PortfolioPage() {
                                 </Popover>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="cost">Cost at time of Purchase</Label>
+                                <Label htmlFor="purchaseCost">Cost at time of Purchase</Label>
                                 <Input
                                     id="purchaseCost"
                                     type="number"
@@ -177,7 +177,7 @@ export default function PortfolioPage() {
                     <CardContent>
                         <div className="space-y-4">
                             {etfs.map((etf, index) => {
-                                const totalValue = etf?.shares * etf.currentPrice;
+                                const totalValue = etf?.shares * etf?.currentPrice;
                                 const gainLoss = totalValue - etf?.shares * 100;
                                 return (
                                     <Card key={index}>
