@@ -7,6 +7,7 @@ const ETFSchema = new mongoose.Schema({
     name: { type: String, required: true },
     shares: { type: Number, required: true },
     purchaseDate: { type: Date, required: true },
+    purchaseCost: { type: Number, required: true },
     currentPrice: { type: Number, required: true },
 });
 

@@ -8,7 +8,7 @@ import User from '@/models/User';
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
-    const { symbol, name, shares, purchaseDate, currentPrice } = await req.json();
+    const { symbol, name, shares, purchaseDate, purchaseCost, currentPrice } = await req.json();
 
     if (!session || !session.user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
         symbol,
         name,
         shares,
+        purchaseCost,
         purchaseDate,
         currentPrice,
     });

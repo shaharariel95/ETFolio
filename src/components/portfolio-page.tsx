@@ -24,6 +24,7 @@ interface ETF {
     name: string;
     shares: number;
     purchaseDate: Date;
+    purchaseCost: number,
     currentPrice: number;
 }
 
@@ -32,6 +33,7 @@ export default function PortfolioPage() {
     const [newEtf, setNewEtf] = useState({
         symbol: "",
         shares: 0,
+        purchaseCost: 0,
         purchaseDate: new Date(),
     });
 
@@ -58,6 +60,7 @@ export default function PortfolioPage() {
                     symbol: newEtf.symbol,
                     name: selectedEtf.name,
                     shares: newEtf.shares,
+                    purchaseCost: newEtf.purchaseCost,
                     purchaseDate: newEtf.purchaseDate,
                     currentPrice: Math.random() * 500 + 100, // Mock price logic
                 }),
@@ -65,7 +68,7 @@ export default function PortfolioPage() {
             if (res.ok) {
                 const etf = await res.json();
                 setEtfs([...etfs, etf.etf]);
-                setNewEtf({ symbol: "", shares: 0, purchaseDate: new Date() });
+                setNewEtf({ symbol: "", shares: 0, purchaseCost: 0, purchaseDate: new Date() });
             }
         }
     };
@@ -151,6 +154,15 @@ export default function PortfolioPage() {
                                     </PopoverContent>
                                 </Popover>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="cost">Cost at time of Purchase</Label>
+                                <Input
+                                    id="purchaseCost"
+                                    type="number"
+                                    value={newEtf.purchaseCost}
+                                    onChange={(e) => setNewEtf({ ...newEtf, purchaseCost: Number(e.target.value) })}
+                                />
+                            </div>
                             <div className="flex items-end">
                                 <Button onClick={addEtf} className="w-full">Add ETF</Button>
                             </div>
@@ -165,8 +177,8 @@ export default function PortfolioPage() {
                     <CardContent>
                         <div className="space-y-4">
                             {etfs.map((etf, index) => {
-                                const totalValue = etf.shares * etf.currentPrice;
-                                const gainLoss = totalValue - etf.shares * 100;
+                                const totalValue = etf?.shares * etf.currentPrice;
+                                const gainLoss = totalValue - etf?.shares * 100;
                                 return (
                                     <Card key={index}>
                                         <CardContent className="p-4">
